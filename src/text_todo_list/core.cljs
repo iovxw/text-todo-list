@@ -126,14 +126,21 @@
     (set! (.-value input-box) (if-let [text (.-text js/localStorage)]
                                 text
                                 default-text))
+    (when-let [tagc (.-tagc js/localStorage)]
+      (set! (.-value search-contain) tagc))
+    (when-let [tage (.-tage js/localStorage)]
+      (set! (.-value search-exclude) tage))
+    (update-f)
+
     (set! (.-oninput input-box)
           #(do (set! (.-text js/localStorage) (.-value input-box))
                (when (> (-> js/window .-screen .-width) 640)
                  (update-f))))
-    (update-f)
 
-    (set! (.-oninput search-contain) update-f)
-    (set! (.-oninput search-exclude) update-f)
+    (set! (.-oninput search-contain) #(do (set! (.-tagc js/localStorage) (.-value search-contain))
+                                          (update-f)))
+    (set! (.-oninput search-exclude) #(do (set! (.-tage js/localStorage) (.-value search-exclude))
+                                          (update-f)))
 
     (set! (.-onclick preview-btn)
           #(if (has-class? v "h")
