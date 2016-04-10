@@ -2,6 +2,13 @@ body {
     margin: 0;
 }
 
+code {
+    background: #424242;
+    border: 1px solid rgba(255,255,255,.1);
+    padding: 0 .3em;
+    display: inline-block;
+}
+
 #app {
     display: flex;
     height: 100vh;
@@ -29,6 +36,14 @@ body {
 }
 
 #view-box {
+}
+
+.search {
+    display: flex;
+}
+
+.search input {
+    width: 50%;
 }
 
 p {
