@@ -77,11 +77,49 @@
                        "| 以及不能包含的标签\n"
                        "+ 功能 Clojure 已完成"))
 
+(defn del-class [e c]
+  (let [class (-> (.-className e)
+                  (string/split \space)
+                  (set)
+                  (disj c))]
+    (set! (.-className e) (string/join \space class))))
+
+(defn add-class [e c]
+  (let [class (-> (.-className e)
+                  (string/split \space)
+                  (conj c))]
+    (set! (.-className e) (string/join \space class))))
+
+(defn has-class? [e c]
+  (let [class (-> (.-className e)
+                  (string/split \space))]
+    (some #(= % c) class)))
+
+(def sp (atom 0))
+(def ep (atom 0))
+
+(defn insert-at-cursor [e v]
+  (let [sp @sp
+        ep @ep
+        value (.-value e)]
+    (set! (.-value e) (str (.substring value 0 sp)
+                           v
+                           (.substring value ep (.-length value))))
+    (.focus e)
+    (set! (.-selectionStart e) (+ sp (.-length v)))
+    (set! (.-selectionEnd e) (.-selectionStart e))))
+
 (defn main []
   (let [input-box (.getElementById js/document "input-box") ; TODO: 设为全局 atom
         view-box (.getElementById js/document "view-box")
         search-contain (.getElementById js/document "search-contain")
         search-exclude (.getElementById js/document "search-exclude")
+        preview-btn (.getElementById js/document "preview")
+        i (.getElementById js/document "i")
+        v (.getElementById js/document "v")
+        b1 (.getElementById js/document "b1")
+        b2 (.getElementById js/document "b2")
+        b3 (.getElementById js/document "b3")
         update-f #(set! (.-innerHTML view-box) (parse (.-value input-box)
                                                       (.-value search-contain)
                                                       (.-value search-exclude)))]
@@ -90,12 +128,29 @@
                                 default-text))
     (set! (.-oninput input-box)
           #(do (set! (.-text js/localStorage) (.-value input-box))
-               (update-f)))
+               (when (> (-> js/window .-screen .-width) 640)
+                 (update-f))))
     (update-f)
 
     (set! (.-oninput search-contain) update-f)
+    (set! (.-oninput search-exclude) update-f)
 
-    (set! (.-oninput search-exclude) update-f)))
+    (set! (.-onclick preview-btn)
+          #(if (has-class? v "h")
+             (do (del-class v "h")
+                 (add-class i "h")
+                 (update-f)
+                 (set! (.-innerText preview-btn) "编辑"))
+             (do (add-class v "h")
+                 (del-class i "h")
+                 (set! (.-innerText preview-btn) "预览"))))
+
+    (set! (.-onblur input-box) #(do (reset! sp (.-selectionStart input-box))
+                                    (reset! ep (.-selectionEnd input-box))))
+
+    (set! (.-onclick b1) #(insert-at-cursor input-box "\n- "))
+    (set! (.-onclick b2) #(insert-at-cursor input-box "\n| "))
+    (set! (.-onclick b3) #(insert-at-cursor input-box "\n+ "))))
 
 (set! (.-onload js/window) main)
 

@@ -57,6 +57,10 @@ p {
     color: white;
 }
 
+.task:last-child {
+    margin-bottom: 0;
+}
+
 .task .title {
     font-size: 18px;
 }
@@ -92,3 +96,47 @@ p {
 .c15 {background: #BF360C;}
 .c16 {background: #3E2723;}
 .c17 {background: #263238;}
+
+#preview {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 4em;
+    font-size: 16px;
+    height: 26px;
+}
+
+.tool {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.tool button {
+    font-size: 16px;
+    width: 2em;
+    height: 26px;
+}
+
+@media (max-width: 640px) {
+    .box {
+        width: 100%;
+    }
+    .h {
+        display: none;
+    }
+    #preview {
+        display: block;
+    }
+    .tool {
+        display: block;
+    }
+    #input-box {
+        padding-bottom: 36px;
+    }
+    #view-box {
+        padding-bottom: 26px;
+    }
+}
