@@ -19,7 +19,9 @@
   :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
                                   [org.clojure/tools.nrepl "0.2.12"]
                                   [figwheel-sidecar "0.5.2"]]
-                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
+                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
+                                  :init (do (use 'figwheel-sidecar.repl-api)
+                                            (start-figwheel!))}}}
 
   :source-paths ["src"]
 
